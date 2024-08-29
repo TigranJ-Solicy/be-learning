@@ -1,9 +1,24 @@
 import { Request, Response, NextFunction } from "express";
-import { AppDataSource } from "../data-source"; // Update import path if needed
+import { AppDataSource } from "../data-source"; // Ensure correct path
 import { User } from "../entity/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+/**
+ * @swagger
+ * /auth/:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     responses:
+ *       200:
+ *         description: List of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: 'components/schemas/User'
+ */
 export const getUsers = async (
   req: Request,
   res: Response,
@@ -18,6 +33,32 @@ export const getUsers = async (
   }
 };
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Create a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *            $ref: 'components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: User created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   $ref: 'components/schemas/User'
+ *                 token:
+ *                   type: string
+ *     security:
+ *       - bearerAuth: []
+ */
 export const createUser = async (
   req: Request,
   res: Response,
@@ -57,6 +98,39 @@ export const createUser = async (
   }
 };
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login a user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User logged in
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   $ref: 'components/schemas/User'
+ *                 email:
+ *                   type: string
+ *                 password:
+ *                   type: string
+ *       400:
+ *         description: Invalid credentials
+ */
 export const login = async (
   req: Request,
   res: Response,
