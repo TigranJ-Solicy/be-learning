@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { getMongoRepository } from "typeorm";
 import { Item } from "../entity/Items";
+import { AppDataSource } from "../data-source";
 
 export const createItem = async (
   req: Request,
@@ -16,7 +16,7 @@ export const createItem = async (
       });
     }
 
-    const organizationRepository = getMongoRepository(Item);
+    const organizationRepository = AppDataSource.getRepository(Item);
     const organization = organizationRepository.create({
       creatorEmail,
       organizationName,

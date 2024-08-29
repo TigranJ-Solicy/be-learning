@@ -1,9 +1,8 @@
 import express, { Application } from "express";
-import { createConnection } from "typeorm";
 import userRoutes from "./routes/userRoutes";
 import organizationRoutes from "./routes/organizationRoutes";
 import itemRoutes from "./routes/itemRoutes";
-import ormconfig from "./config/ormconfig";
+import { AppDataSource } from "./data-source";
 
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
@@ -26,19 +25,18 @@ app.use(
   }
 );
 
-export default app;
-
-const startServer = async () => {
+async function startServer() {
   try {
-    await createConnection(ormconfig);
-    console.log("Connected to the database");
-
+    await AppDataSource.initialize();
+    console.log("Data Source has been initialized!");
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("Database connection error:", error);
+    console.error("Error during Data Source initialization:", error);
   }
-};
+}
 
 startServer();
+
+export default app;

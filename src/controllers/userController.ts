@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getMongoRepository } from "typeorm";
+import { AppDataSource } from "../data-source"; // Update import path if needed
 import { User } from "../entity/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -10,7 +10,7 @@ export const getUsers = async (
   next: NextFunction
 ) => {
   try {
-    const userRepository = getMongoRepository(User);
+    const userRepository = AppDataSource.getRepository(User);
     const users = await userRepository.find();
     res.json(users);
   } catch (error) {
@@ -34,7 +34,7 @@ export const createUser = async (
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const userRepository = getMongoRepository(User);
+    const userRepository = AppDataSource.getRepository(User);
     const user = userRepository.create({
       name,
       email,
@@ -69,8 +69,8 @@ export const login = async (
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const userRepository = getMongoRepository(User);
-    const user = await userRepository.findOne({ where: { email } });
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOneBy({ email });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
